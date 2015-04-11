@@ -1,0 +1,596 @@
+#Create new user across AD, Exchange, Lync
+#Patrick Mendyka
+#Interface People
+#
+#Captures creds for lync server admin
+$cred = Get-Credential “IPeople.org\”
+
+#Captures new users first name
+[void] [System.Reflection.Assembly]::LoadWithPartialName("System.Drawing") 
+[void] [System.Reflection.Assembly]::LoadWithPartialName("System.Windows.Forms") 
+
+$objForm = New-Object System.Windows.Forms.Form 
+$objForm.Text = "New User First Name"
+$objForm.Size = New-Object System.Drawing.Size(300,200) 
+$objForm.StartPosition = "CenterScreen"
+
+$objForm.KeyPreview = $True
+$objForm.Add_KeyDown(
+    {
+        if ($_.KeyCode -eq "Enter") 
+        {
+            $global:firstname=$objTextBox.Text;
+            $objForm.Close()
+        }
+    }
+)
+$objForm.Add_KeyDown(
+    {
+        if ($_.KeyCode -eq "Escape") 
+        {
+            $objForm.Close()
+        }
+    }
+)
+
+$objTextBox = New-Object System.Windows.Forms.TextBox 
+$objTextBox.Location = New-Object System.Drawing.Size(10,40) 
+$objTextBox.Size = New-Object System.Drawing.Size(260,20) 
+$objForm.Controls.Add($objTextBox) 
+
+$OKButton = New-Object System.Windows.Forms.Button
+$OKButton.Location = New-Object System.Drawing.Size(75,120)
+$OKButton.Size = New-Object System.Drawing.Size(75,23)
+$OKButton.Text = "OK"
+$OKButton.Add_Click(
+    {
+        $global:firstname=$objTextBox.Text;
+        $objForm.Close()
+    }
+)
+$objForm.Controls.Add($OKButton)
+
+$CancelButton = New-Object System.Windows.Forms.Button
+$CancelButton.Location = New-Object System.Drawing.Size(150,120)
+$CancelButton.Size = New-Object System.Drawing.Size(75,23)
+$CancelButton.Text = "Cancel"
+$CancelButton.Add_Click({$objForm.Close()})
+$objForm.Controls.Add($CancelButton)
+
+$objLabel = New-Object System.Windows.Forms.Label
+$objLabel.Location = New-Object System.Drawing.Size(10,20) 
+$objLabel.Size = New-Object System.Drawing.Size(280,20) 
+$objLabel.Text = "Please enter the user's first name below:"
+$objForm.Controls.Add($objLabel) 
+
+
+$objForm.Topmost = $True
+
+$objForm.Add_Shown({$objForm.Activate()})
+
+[void] $objForm.ShowDialog()
+
+#Captures new users last name
+[void] [System.Reflection.Assembly]::LoadWithPartialName("System.Drawing") 
+[void] [System.Reflection.Assembly]::LoadWithPartialName("System.Windows.Forms") 
+
+$objForm = New-Object System.Windows.Forms.Form 
+$objForm.Text = "New User Last Name"
+$objForm.Size = New-Object System.Drawing.Size(300,200) 
+$objForm.StartPosition = "CenterScreen"
+
+$objForm.KeyPreview = $True
+$objForm.Add_KeyDown(
+    {
+        if ($_.KeyCode -eq "Enter") 
+        {
+            $global:lastname=$objTextBox.Text;
+            $objForm.Close()
+        }
+    }
+)
+$objForm.Add_KeyDown(
+    {
+        if ($_.KeyCode -eq "Escape") 
+        {
+            $objForm.Close()
+        }
+    }
+)
+
+$objTextBox = New-Object System.Windows.Forms.TextBox 
+$objTextBox.Location = New-Object System.Drawing.Size(10,40) 
+$objTextBox.Size = New-Object System.Drawing.Size(260,20) 
+$objForm.Controls.Add($objTextBox) 
+
+$OKButton = New-Object System.Windows.Forms.Button
+$OKButton.Location = New-Object System.Drawing.Size(75,120)
+$OKButton.Size = New-Object System.Drawing.Size(75,23)
+$OKButton.Text = "OK"
+$OKButton.Add_Click(
+    {
+        $global:lastname=$objTextBox.Text;
+        $objForm.Close()
+    }
+)
+$objForm.Controls.Add($OKButton)
+
+$CancelButton = New-Object System.Windows.Forms.Button
+$CancelButton.Location = New-Object System.Drawing.Size(150,120)
+$CancelButton.Size = New-Object System.Drawing.Size(75,23)
+$CancelButton.Text = "Cancel"
+$CancelButton.Add_Click({$objForm.Close()})
+$objForm.Controls.Add($CancelButton)
+
+$objLabel = New-Object System.Windows.Forms.Label
+$objLabel.Location = New-Object System.Drawing.Size(10,20) 
+$objLabel.Size = New-Object System.Drawing.Size(280,20) 
+$objLabel.Text = "Please enter the user's last name below:"
+$objForm.Controls.Add($objLabel) 
+
+
+$objForm.Topmost = $True
+
+$objForm.Add_Shown({$objForm.Activate()})
+
+[void] $objForm.ShowDialog()
+
+#Captures new users username
+[void] [System.Reflection.Assembly]::LoadWithPartialName("System.Drawing") 
+[void] [System.Reflection.Assembly]::LoadWithPartialName("System.Windows.Forms") 
+
+$objForm = New-Object System.Windows.Forms.Form 
+$objForm.Text = "New User Username"
+$objForm.Size = New-Object System.Drawing.Size(300,200) 
+$objForm.StartPosition = "CenterScreen"
+
+$objForm.KeyPreview = $True
+$objForm.Add_KeyDown(
+    {
+        if ($_.KeyCode -eq "Enter") 
+        {
+            $global:username=$objTextBox.Text;
+            $objForm.Close()
+        }
+    }
+)
+$objForm.Add_KeyDown(
+    {
+        if ($_.KeyCode -eq "Escape") 
+        {
+            $objForm.Close()
+        }
+    }
+)
+
+$objTextBox = New-Object System.Windows.Forms.TextBox 
+$objTextBox.Location = New-Object System.Drawing.Size(10,40) 
+$objTextBox.Size = New-Object System.Drawing.Size(260,20) 
+$objForm.Controls.Add($objTextBox) 
+
+$OKButton = New-Object System.Windows.Forms.Button
+$OKButton.Location = New-Object System.Drawing.Size(75,120)
+$OKButton.Size = New-Object System.Drawing.Size(75,23)
+$OKButton.Text = "OK"
+$OKButton.Add_Click(
+    {
+        $global:username=$objTextBox.Text;
+        $objForm.Close()
+    }
+)
+$objForm.Controls.Add($OKButton)
+
+$CancelButton = New-Object System.Windows.Forms.Button
+$CancelButton.Location = New-Object System.Drawing.Size(150,120)
+$CancelButton.Size = New-Object System.Drawing.Size(75,23)
+$CancelButton.Text = "Cancel"
+$CancelButton.Add_Click({$objForm.Close()})
+$objForm.Controls.Add($CancelButton)
+
+$objLabel = New-Object System.Windows.Forms.Label
+$objLabel.Location = New-Object System.Drawing.Size(10,20) 
+$objLabel.Size = New-Object System.Drawing.Size(280,20) 
+$objLabel.Text = "Please enter the user's uername below:"
+$objForm.Controls.Add($objLabel) 
+
+
+$objForm.Topmost = $True
+
+$objForm.Add_Shown({$objForm.Activate()})
+
+[void] $objForm.ShowDialog()
+
+#Captures new users phone extension
+[void] [System.Reflection.Assembly]::LoadWithPartialName("System.Drawing") 
+[void] [System.Reflection.Assembly]::LoadWithPartialName("System.Windows.Forms") 
+
+$objForm = New-Object System.Windows.Forms.Form 
+$objForm.Text = "New User Phone Extension"
+$objForm.Size = New-Object System.Drawing.Size(300,200) 
+$objForm.StartPosition = "CenterScreen"
+
+$objForm.KeyPreview = $True
+$objForm.Add_KeyDown(
+    {
+        if ($_.KeyCode -eq "Enter") 
+        {
+            $global:phoneext=$objTextBox.Text;
+            $objForm.Close()
+        }
+    }
+)
+$objForm.Add_KeyDown(
+    {
+        if ($_.KeyCode -eq "Escape") 
+        {
+            $objForm.Close()
+        }
+    }
+)
+
+$objTextBox = New-Object System.Windows.Forms.TextBox 
+$objTextBox.Location = New-Object System.Drawing.Size(10,40) 
+$objTextBox.Size = New-Object System.Drawing.Size(260,20) 
+$objForm.Controls.Add($objTextBox) 
+
+$OKButton = New-Object System.Windows.Forms.Button
+$OKButton.Location = New-Object System.Drawing.Size(75,120)
+$OKButton.Size = New-Object System.Drawing.Size(75,23)
+$OKButton.Text = "OK"
+$OKButton.Add_Click(
+    {
+        $global:phoneext=$objTextBox.Text;
+        $objForm.Close()
+    }
+)
+$objForm.Controls.Add($OKButton)
+
+$CancelButton = New-Object System.Windows.Forms.Button
+$CancelButton.Location = New-Object System.Drawing.Size(150,120)
+$CancelButton.Size = New-Object System.Drawing.Size(75,23)
+$CancelButton.Text = "Cancel"
+$CancelButton.Add_Click({$objForm.Close()})
+$objForm.Controls.Add($CancelButton)
+
+$objLabel = New-Object System.Windows.Forms.Label
+$objLabel.Location = New-Object System.Drawing.Size(10,20) 
+$objLabel.Size = New-Object System.Drawing.Size(280,20) 
+$objLabel.Text = "Please enter the user's phone extension below:"
+$objForm.Controls.Add($objLabel) 
+
+
+$objForm.Topmost = $True
+
+$objForm.Add_Shown({$objForm.Activate()})
+
+[void] $objForm.ShowDialog()
+
+#Captures new users job title
+[void] [System.Reflection.Assembly]::LoadWithPartialName("System.Drawing") 
+[void] [System.Reflection.Assembly]::LoadWithPartialName("System.Windows.Forms") 
+
+$objForm = New-Object System.Windows.Forms.Form 
+$objForm.Text = "New User Title"
+$objForm.Size = New-Object System.Drawing.Size(300,200) 
+$objForm.StartPosition = "CenterScreen"
+
+$objForm.KeyPreview = $True
+$objForm.Add_KeyDown(
+    {
+        if ($_.KeyCode -eq "Enter") 
+        {
+            $global:title=$objTextBox.Text;
+            $objForm.Close()
+        }
+    }
+)
+$objForm.Add_KeyDown(
+    {
+        if ($_.KeyCode -eq "Escape") 
+        {
+            $objForm.Close()
+        }
+    }
+)
+
+$objTextBox = New-Object System.Windows.Forms.TextBox 
+$objTextBox.Location = New-Object System.Drawing.Size(10,40) 
+$objTextBox.Size = New-Object System.Drawing.Size(260,20) 
+$objForm.Controls.Add($objTextBox) 
+
+$OKButton = New-Object System.Windows.Forms.Button
+$OKButton.Location = New-Object System.Drawing.Size(75,120)
+$OKButton.Size = New-Object System.Drawing.Size(75,23)
+$OKButton.Text = "OK"
+$OKButton.Add_Click(
+    {
+        $global:title=$objTextBox.Text;
+        $objForm.Close()
+    }
+)
+$objForm.Controls.Add($OKButton)
+
+$CancelButton = New-Object System.Windows.Forms.Button
+$CancelButton.Location = New-Object System.Drawing.Size(150,120)
+$CancelButton.Size = New-Object System.Drawing.Size(75,23)
+$CancelButton.Text = "Cancel"
+$CancelButton.Add_Click({$objForm.Close()})
+$objForm.Controls.Add($CancelButton)
+
+$objLabel = New-Object System.Windows.Forms.Label
+$objLabel.Location = New-Object System.Drawing.Size(10,20) 
+$objLabel.Size = New-Object System.Drawing.Size(280,20) 
+$objLabel.Text = "Please enter the user's title below:"
+$objForm.Controls.Add($objLabel) 
+
+
+$objForm.Topmost = $True
+
+$objForm.Add_Shown({$objForm.Activate()})
+
+[void] $objForm.ShowDialog()
+
+#Captures new users department
+[void] [System.Reflection.Assembly]::LoadWithPartialName("System.Windows.Forms")
+[void] [System.Reflection.Assembly]::LoadWithPartialName("System.Drawing") 
+
+$objForm = New-Object System.Windows.Forms.Form 
+$objForm.Text = "Select a Department"
+$objForm.Size = New-Object System.Drawing.Size(300,200) 
+$objForm.StartPosition = "CenterScreen"
+
+$objForm.KeyPreview = $True
+$objForm.Add_KeyDown(
+    {
+        if ($_.KeyCode -eq "Enter") 
+            {
+		$global:department=$objListBox.SelectedItem;
+		$objForm.Close()
+            }
+    }
+)
+$objForm.Add_KeyDown(
+    {
+        if ($_.KeyCode -eq "Escape") 
+        {
+            $objForm.Close()
+        }
+    }
+)
+
+$OKButton = New-Object System.Windows.Forms.Button
+$OKButton.Location = New-Object System.Drawing.Size(75,120)
+$OKButton.Size = New-Object System.Drawing.Size(75,23)
+$OKButton.Text = "OK"
+$OKButton.Add_Click(
+	{
+		$global:department=$objListBox.SelectedItem;
+		$objForm.Close()
+	}
+)
+$objForm.Controls.Add($OKButton)
+
+$CancelButton = New-Object System.Windows.Forms.Button
+$CancelButton.Location = New-Object System.Drawing.Size(150,120)
+$CancelButton.Size = New-Object System.Drawing.Size(75,23)
+$CancelButton.Text = "Cancel"
+$CancelButton.Add_Click({$objForm.Close()})
+$objForm.Controls.Add($CancelButton)
+
+$objLabel = New-Object System.Windows.Forms.Label
+$objLabel.Location = New-Object System.Drawing.Size(10,20) 
+$objLabel.Size = New-Object System.Drawing.Size(280,20) 
+$objLabel.Text = "Please select a department:"
+$objForm.Controls.Add($objLabel) 
+
+$objListBox = New-Object System.Windows.Forms.ListBox 
+$objListBox.Location = New-Object System.Drawing.Size(10,40) 
+$objListBox.Size = New-Object System.Drawing.Size(260,20) 
+$objListBox.Height = 80
+
+[void] $objListBox.Items.Add("Accounting")
+[void] $objListBox.Items.Add("Admin")
+[void] $objListBox.Items.Add("DBA")
+[void] $objListBox.Items.Add("Developer")
+[void] $objListBox.Items.Add("Integration")
+[void] $objListBox.Items.Add("IT")
+[void] $objListBox.Items.Add("Sales")
+[void] $objListBox.Items.Add("TSA")
+
+
+$objForm.Controls.Add($objListBox) 
+
+$objForm.Topmost = $True
+
+$objForm.Add_Shown(
+	{
+		$objForm.Activate()
+	}
+)
+[void] $objForm.ShowDialog()
+
+#Captures new users manager
+[void] [System.Reflection.Assembly]::LoadWithPartialName("System.Drawing") 
+[void] [System.Reflection.Assembly]::LoadWithPartialName("System.Windows.Forms") 
+
+$objForm = New-Object System.Windows.Forms.Form 
+$objForm.Text = "New User's Manager"
+$objForm.Size = New-Object System.Drawing.Size(300,200) 
+$objForm.StartPosition = "CenterScreen"
+
+$objForm.KeyPreview = $True
+$objForm.Add_KeyDown(
+    {
+        if ($_.KeyCode -eq "Enter") 
+        {
+            $global:manager=$objTextBox.Text;
+            $objForm.Close()
+        }
+    }
+)
+$objForm.Add_KeyDown(
+    {
+        if ($_.KeyCode -eq "Escape") 
+        {
+            $objForm.Close()
+        }
+    }
+)
+
+$objTextBox = New-Object System.Windows.Forms.TextBox 
+$objTextBox.Location = New-Object System.Drawing.Size(10,40) 
+$objTextBox.Size = New-Object System.Drawing.Size(260,20) 
+$objForm.Controls.Add($objTextBox) 
+
+$OKButton = New-Object System.Windows.Forms.Button
+$OKButton.Location = New-Object System.Drawing.Size(75,120)
+$OKButton.Size = New-Object System.Drawing.Size(75,23)
+$OKButton.Text = "OK"
+$OKButton.Add_Click(
+    {
+        $global:manager=$objTextBox.Text;
+        $objForm.Close()
+    }
+)
+$objForm.Controls.Add($OKButton)
+
+$CancelButton = New-Object System.Windows.Forms.Button
+$CancelButton.Location = New-Object System.Drawing.Size(150,120)
+$CancelButton.Size = New-Object System.Drawing.Size(75,23)
+$CancelButton.Text = "Cancel"
+$CancelButton.Add_Click({$objForm.Close()})
+$objForm.Controls.Add($CancelButton)
+
+$objLabel = New-Object System.Windows.Forms.Label
+$objLabel.Location = New-Object System.Drawing.Size(10,20) 
+$objLabel.Size = New-Object System.Drawing.Size(280,20) 
+$objLabel.Text = "Please enter the user's manager below:"
+$objForm.Controls.Add($objLabel) 
+
+
+$objForm.Topmost = $True
+
+$objForm.Add_Shown({$objForm.Activate()})
+
+[void] $objForm.ShowDialog()
+
+#Creates new AD user
+New-ADUser -Name "$firstname $lastname" -GivenName $firstname -Surname $lastname -UserPrincipalName "$username@ipeople.org" -SamAccountName $username -Company "IPeople" -Title "$title" -Description "ws$phoneext" -StreetAddress "2274 Rockbrook Drive" -City "Lewisville" -State "Texas" -Country "USA" -PostalCode "75067" -EmailAddress "$firstname.$lastname@ipeople.com" -DisplayName "$firstname $lastname" -HomeDirectory "\\ipfiles\users\$firstname.$lastname" -HomeDrive "U:" -OfficePhone $phone -Department "$department" -Manager "$manager" -AccountPassword (Read-Host -AsSecureString "AccountPassword") -PassThru | Enable-ADAccount
+Get-ADUser $username | Move-ADObject -TargetPath 'OU=Ipeople Employees,OU=Ipeople,DC=ipeople,DC=org'
+Start-Sleep -s 1
+
+#Adds new user to universal groups
+Add-ADGroupMember IPeople $username
+Add-ADGroupMember RemoteAccess $username
+Add-ADGroupMember zz-all $username
+Add-ADGroupMember zz-ipeople $username
+Add-ADGroupMember zz-Everyone $username
+Add-ADGroupMember zz-local $username
+
+#Adds new specific groups per department
+If ($department -eq 'Accounting')
+    {
+        Add-ADGroupMember "IPeopleAccountsPayable@ipeople.com" $username
+        Add-ADGroupMember zz-Accounts $username
+        Add-ADGroupMember zz-Administration $username
+        Add-ADGroupMember VerizonProxyGroup $username
+        Add-ADGroupMember "zz-QB Users" $username
+    }
+ElseIf ($department -eq 'Admin')
+    {
+        Add-ADGroupMember IPeople $username
+        Add-ADGroupMember "Photo Editors" $username
+        Add-ADGroupMember zz-Accounts $username
+        Add-ADGroupMember VerizonProxyGroup $username
+        Add-ADGroupMember zz-Administration $username
+        Add-ADGroupMember zz-Fax $username
+        Add-ADGroupMember zz-fungroup $username
+        Add-ADGroupMember zz-ipeople1 $username
+        Add-ADGroupMember zz-Notify $username
+        Add-ADGroupMember "zz-QB Users" $username
+    }
+ElseIf ($department -eq 'DBA')
+    {
+        Add-ADGroupMember ClientContactLogonScript $username
+        Add-ADGroupMember zz-BuildServer $username
+        Add-ADGroupMember zz-BusinessSolutions $username
+        Add-ADGroupMember zz-DBA $username
+        Add-ADGroupMember zz-Development $username
+        Add-ADGroupMember zz-IPDBA $username
+        Add-ADGroupMember zz-ipeople1 $username
+        Add-ADGroupMember zz-PatientPortal $username
+        Add-ADGroupMember zz-ScrumDevelopers $username
+        Add-ADGroupMember zz-ScrumTeamConstultants $username
+    }
+ElseIf ($department -eq 'Developer')
+    {
+        Add-ADGroupMember zz-BuildServer $username
+        Add-ADGroupMember zz-BusinessSolutions $username
+        Add-ADGroupMember zz-Developers $username
+        Add-ADGroupMember zz-Development $username
+        Add-ADGroupMember zz-ipeople1 $username
+        Add-ADGroupMember zz-ScrumDevelopers $username
+        Add-ADGroupMember zz-SourceControl $username
+    }
+ElseIf ($department -eq 'Integration')
+    {
+        Add-ADGroupMember "Remote Desktop Users" $username
+        Add-ADGroupMember zz-BuildServer $username
+        Add-ADGroupMember zz-BusinessSolutions $username
+        Add-ADGroupMember zz-integration $username
+        Add-ADGroupMember zz-Ipeople1 $username
+        Add-ADGroupMember zz-OnCall $username
+        Add-ADGroupMember zz-ScrumDevelopers $username
+        Add-ADGroupMember zz-SourceControl $username
+    }
+If ($department -eq 'IT')
+    {
+        Add-ADGroupMember zz-informationsystems $username
+        Add-ADGroupMember BarracudaVPNCLients $username
+        Add-ADGroupMember "Domain Admins" $username
+        Add-ADGroupMember "Enterprise Admins" $username
+        Add-ADGroupMember zz-BuildServer $username
+        Add-ADGroupMember "Schema Admins" $username
+    }
+ElseIf ($department -eq 'Sales')
+    {
+        Add-ADGroupMember zz-PatientPortal $username
+        Add-ADGroupMember zz-Sales $username
+        Add-ADGroupMember zz-SalesTeam $username
+        Add-ADGroupMember VerizonProxyGroup $username
+    }
+ElseIf ($department -eq 'TSA')
+    {
+        Add-ADGroupMember zz-BuildServer $username
+        Add-ADGroupMember zz-BusinessSolutions $username
+        Add-ADGroupMember zz-delivery $username
+        Add-ADGroupMember zz-OnCall $username
+        Add-ADGroupMember zz-passport $username
+        Add-ADGroupMember zz-ScrumDevelopers $username
+        Add-ADGroupMember zz-Support $username
+        Add-ADGroupMember zz-Trainers $username
+    }
+
+#Connects to mail server
+$Session = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri http://mail2.ipeople.org/PowerShell/ -Authentication Kerberos
+Import-PSSession $Session
+
+#Enables new users mailbox
+Enable-Mailbox -Database "IPeople" -Identity "$firstname $lastname"
+Enable-UMMailbox -Identity "Ipeople.org\$username" -UMMailboxPolicy "Live_UMDialPlan Default Policy" -Extensions $phoneext -PIN 111111 -SIPResourceIdentifier $username@ipeople.org
+Set-CASMailbox $username -ActiveSyncMailboxPolicy (Get-ActiveSyncMailboxPolicy "Requires_Pin").Identity
+
+
+#Connects to lync server
+$session = New-PSSession -ConnectionURI “https://Lync01.ipeople.org/OcsPowershell” -Credential $cred
+Import-PsSession $session
+
+#Enables new user on lync server
+Enable-CsUser -Identity "Ipeople.org\$username" -RegistrarPool lync01.ipeople.org -SipAddress "sip:$username@ipeople.org"
+Set-CsUser "$username" –AudioVideoDisabled $False –RemoteCallControlTelephonyEnabled $False –EnterpriseVoiceEnabled $True -LineUri "tel:+12142221135;ext=$phoneext"
+
+Start-Sleep -s 1
+
+#Removes Session
+$s = get-pssession
+remove-pssession -session $s
