@@ -1,5 +1,4 @@
 #Create new user across AD, Exchange, Lync
-#Powershell
 #Patrick Mendyka
 #Interface People
 #
@@ -266,6 +265,79 @@ $objForm.Add_Shown({$objForm.Activate()})
 
 [void] $objForm.ShowDialog()
 
+#Select a new users company
+[void] [System.Reflection.Assembly]::LoadWithPartialName("System.Windows.Forms")
+[void] [System.Reflection.Assembly]::LoadWithPartialName("System.Drawing") 
+
+$objForm = New-Object System.Windows.Forms.Form 
+$objForm.Text = "Select a Company"
+$objForm.Size = New-Object System.Drawing.Size(300,200) 
+$objForm.StartPosition = "CenterScreen"
+
+$objForm.KeyPreview = $True
+$objForm.Add_KeyDown(
+    {
+        if ($_.KeyCode -eq "Enter") 
+            {
+		$global:company=$objListBox.SelectedItem;
+		$objForm.Close()
+            }
+    }
+)
+$objForm.Add_KeyDown(
+    {
+        if ($_.KeyCode -eq "Escape") 
+        {
+            $objForm.Close()
+        }
+    }
+)
+
+$OKButton = New-Object System.Windows.Forms.Button
+$OKButton.Location = New-Object System.Drawing.Size(75,120)
+$OKButton.Size = New-Object System.Drawing.Size(75,23)
+$OKButton.Text = "OK"
+$OKButton.Add_Click(
+	{
+		$global:company=$objListBox.SelectedItem;
+		$objForm.Close()
+	}
+)
+$objForm.Controls.Add($OKButton)
+
+$CancelButton = New-Object System.Windows.Forms.Button
+$CancelButton.Location = New-Object System.Drawing.Size(150,120)
+$CancelButton.Size = New-Object System.Drawing.Size(75,23)
+$CancelButton.Text = "Cancel"
+$CancelButton.Add_Click({$objForm.Close()})
+$objForm.Controls.Add($CancelButton)
+
+$objLabel = New-Object System.Windows.Forms.Label
+$objLabel.Location = New-Object System.Drawing.Size(10,20) 
+$objLabel.Size = New-Object System.Drawing.Size(280,20) 
+$objLabel.Text = "Please select a company:"
+$objForm.Controls.Add($objLabel) 
+
+$objListBox = New-Object System.Windows.Forms.ListBox 
+$objListBox.Location = New-Object System.Drawing.Size(10,40) 
+$objListBox.Size = New-Object System.Drawing.Size(260,20) 
+$objListBox.Height = 80
+
+[void] $objListBox.Items.Add("IPeople")
+[void] $objListBox.Items.Add("CPeople")
+
+
+$objForm.Controls.Add($objListBox) 
+
+$objForm.Topmost = $True
+
+$objForm.Add_Shown(
+	{
+		$objForm.Activate()
+	}
+)
+[void] $objForm.ShowDialog()
+
 #Captures new users job title
 [void] [System.Reflection.Assembly]::LoadWithPartialName("System.Drawing") 
 [void] [System.Reflection.Assembly]::LoadWithPartialName("System.Windows.Forms") 
@@ -391,6 +463,7 @@ $objListBox.Height = 80
 
 [void] $objListBox.Items.Add("Accounting")
 [void] $objListBox.Items.Add("Admin")
+[void] $objListBox.Items.Add("CPeople")
 [void] $objListBox.Items.Add("DBA")
 [void] $objListBox.Items.Add("Developer")
 [void] $objListBox.Items.Add("Integration")
@@ -477,17 +550,33 @@ $objForm.Add_Shown({$objForm.Activate()})
 
 #Creates new AD user
 New-ADUser -Name "$firstname $lastname" -GivenName $firstname -Surname $lastname -UserPrincipalName "$username@ipeople.org" -SamAccountName $username -Company "IPeople" -Title "$title" -Description "ws$phoneext" -StreetAddress "2274 Rockbrook Drive" -City "Lewisville" -State "Texas" -Country "USA" -PostalCode "75067" -EmailAddress "$firstname.$lastname@ipeople.com" -DisplayName "$firstname $lastname" -HomeDirectory "\\ipfiles\users\$firstname.$lastname" -HomeDrive "U:" -OfficePhone $phone -Department "$department" -Manager "$manager" -AccountPassword (Read-Host -AsSecureString "AccountPassword") -PassThru | Enable-ADAccount
-Get-ADUser $username | Move-ADObject -TargetPath 'OU=Ipeople Employees,OU=Ipeople,DC=ipeople,DC=org'
-Start-Sleep -s 1
 
-#Adds new user to universal groups
-Add-ADGroupMember IPeople $username
-Add-ADGroupMember RemoteAccess $username
-Add-ADGroupMember zz-all $username
-Add-ADGroupMember zz-ipeople $username
-Add-ADGroupMember zz-Everyone $username
-Add-ADGroupMember zz-local $username
+#Moves to specified OU according to company
+If ($company -eq 'IPeople')
+    {
+        Get-ADUser $username | Move-ADObject -TargetPath 'OU=Ipeople Employees,OU=Ipeople,DC=ipeople,DC=org'
+    }
+ElseIf ($company -eq 'CPeople')
+    {
+        Get-ADUser $username | Move-ADObject -TargetPath 'OU=CPeople Employees,OU=Cpeople,DC=ipeople,DC=org'
+    }
 
+#Adds new user to universal groups according to company
+If ($company -eq 'IPeople')
+    {
+        Add-ADGroupMember IPeople $username
+        Add-ADGroupMember RemoteAccess $username
+        Add-ADGroupMember zz-all $username
+        Add-ADGroupMember zz-ipeople $username
+        Add-ADGroupMember zz-Everyone $username
+        Add-ADGroupMember zz-local $username
+    }
+ElseIf ($company -eq 'CPeople')
+    {
+        Add-ADGroupMember zz-all $username
+        Add-ADGroupMember IPeople $username
+        Add-ADGroupMember RemoteAccess $username
+    }
 #Adds new specific groups per department
 If ($department -eq 'Accounting')
     {
@@ -509,6 +598,10 @@ ElseIf ($department -eq 'Admin')
         Add-ADGroupMember zz-ipeople1 $username
         Add-ADGroupMember zz-Notify $username
         Add-ADGroupMember "zz-QB Users" $username
+    }
+ElseIf ($department -eq 'CPeople')
+    {
+        Add-ADGroupMember zz-CPeople $username
     }
 ElseIf ($department -eq 'DBA')
     {
@@ -590,7 +683,6 @@ Import-PsSession $session
 Enable-CsUser -Identity "Ipeople.org\$username" -RegistrarPool lync01.ipeople.org -SipAddress "sip:$username@ipeople.org"
 Set-CsUser "$username" –AudioVideoDisabled $False –RemoteCallControlTelephonyEnabled $False –EnterpriseVoiceEnabled $True -LineUri "tel:+12142221135;ext=$phoneext"
 
-Start-Sleep -s 1
 #Removes Session
 $s = get-pssession
 remove-pssession -session $s
